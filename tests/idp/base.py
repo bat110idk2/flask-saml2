@@ -36,7 +36,8 @@ class SamlView:
 
 
 KEY_DIR = Path(__file__).parent.parent / 'keys' / 'sample'
-CERTIFICATE_FILE = KEY_DIR / 'idp-certificate.pem'
+# CERTIFICATE_FILE = KEY_DIR / 'idp-certificate.pem'
+CERTIFICATE_FILE = KEY_DIR / 'idp-certificate_temp.pem'
 PRIVATE_KEY_FILE = KEY_DIR / 'idp-private-key.pem'
 
 CERTIFICATE = certificate_from_file(CERTIFICATE_FILE)

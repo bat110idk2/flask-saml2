@@ -95,6 +95,7 @@ class ServiceProvider:
 
     def get_sp_signer(self) -> Optional[Signer]:
         """Get the signing algorithm used by this SP."""
+        print('= get_sp_signer___1')
         private_key = self.get_sp_private_key()
         if private_key is not None:
             return RsaSha1Signer(private_key)

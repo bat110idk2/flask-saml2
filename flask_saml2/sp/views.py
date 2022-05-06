@@ -25,9 +25,14 @@ class Login(SAML2View):
     Log in to this SP using SAML.
     """
     def get(self):
+        print('====> Login')
         handler = self.sp.get_default_idp_handler()
+        print(f'handler:{handler}')
+        print(f'handler.entity_id:{handler.entity_id}')
         login_next = self.sp.get_login_return_url()
+        print(f'login_next:{login_next}')
         if handler:
+            print(f'redirect:{url_for(".login_idp", entity_id=handler.entity_id, next=login_next)}')
             return redirect(url_for('.login_idp', entity_id=handler.entity_id, next=login_next))
         return self.sp.render_template(
             'flask_saml2_sp/choose_idp.html',
@@ -40,9 +45,17 @@ class LoginIdP(SAML2View):
     Log in using a specific IdP.
     """
     def get(self):
+        print('====> LoginIdP')
         entity_id = request.args['entity_id']
+        print(f'entity_id:{entity_id}')
         handler = self.sp.get_idp_handler_by_entity_id(entity_id)
+        print(f'handler:{handler}')
         login_next = self.sp.get_login_return_url()
+        print(f'login_next:{login_next}')
+        print('===')
+        print('===')
+        print('===')
+        # print(f'=> make_login_request_url:{handler.make_login_request_url(login_next)}')
         return redirect(handler.make_login_request_url(login_next))
 
 
@@ -78,13 +91,19 @@ class SingleLogout(SAML2View):
 
 class AssertionConsumer(SAML2View):
     def post(self):
+        print(f'======> AssertionConsumer')
         saml_request = request.form['SAMLResponse']
         relay_state = request.form['RelayState']
+
+        print(f'= saml_request : {saml_request}')
+        print(f'= relay_state : {relay_state}')
 
         for handler in self.sp.get_idp_handlers():
             try:
                 response = handler.get_response_parser(saml_request)
+                print(f'= response : {response}')
                 auth_data = handler.get_auth_data(response)
+                print(f'= auth_data : {auth_data}')
                 return self.sp.login_successful(auth_data, relay_state)
             except CannotHandleAssertion:
                 continue
@@ -97,6 +116,7 @@ class Metadata(SAML2View):
     Replies with the XML metadata for this Service Provider / IdP handler pair.
     """
     def get(self):
+        print(f'======> Metadata')
         metadata = self.sp.render_template(
             'flask_saml2_sp/metadata.xml',
             **self.sp.get_metadata_context())
@@ -108,5 +128,6 @@ class Metadata(SAML2View):
 
 class CannotHandleAssertionView(SAML2ViewMixin, View):
     def dispatch_request(self, exception):
+        print(f'======> CannotHandleAssertionView')
         logger.exception("Can not handle request", exc_info=exception)
         return Response(status=400)

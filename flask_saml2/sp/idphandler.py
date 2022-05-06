@@ -171,7 +171,12 @@ class IdPHandler:
     ) -> str:
         """Make a LoginRequest url and query string for this IdP."""
         authn_request = self.get_authn_request()
+
+        print('= make_login_request_url')
+        print(f'= authn_request: {authn_request}')
+        print(f'= authn_request.get_xml_string():{authn_request.get_xml_string()}')
         saml_request = self.encode_saml_string(authn_request.get_xml_string())
+        print(f'saml_request:{saml_request}')
 
         parameters = [('SAMLRequest', saml_request)]
         if relay_state is not None:
@@ -198,10 +203,12 @@ class IdPHandler:
         Make a URL to the SAML IdP, signing the query parameters if required.
         """
         if self.sp.should_sign_requests():
+            print('query1')
             query = sign_query_parameters(self.sp.get_sp_signer(), parameters)
         else:
+            print('query2')
             query = urlencode(parameters)
-
+        print(f'_make_idp_request_url ===== {url}?{query}')
         return f'{url}?{query}'
 
     def decode_saml_string(self, saml_string: str) -> bytes:

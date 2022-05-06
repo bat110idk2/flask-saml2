@@ -324,6 +324,7 @@ def sign_query_parameters(
         "Foo=1&Bar=2&SigAlg=...&Signature=..."
     """
     bits = list(bits)
+    print(f'= bits : {bits}')
 
     # Add the signature algorithm parameter
     bits.append(('SigAlg', signer.uri))

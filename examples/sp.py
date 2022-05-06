@@ -26,14 +26,32 @@ app.config['SAML2_SP'] = {
     'private_key': PRIVATE_KEY,
 }
 
+print('IDP_CERTIFICATE>>>')
+print(IDP_CERTIFICATE)
+
+
+# app.config['SAML2_IDENTITY_PROVIDERS'] = [
+#     {
+#         'CLASS': 'flask_saml2.sp.idphandler.IdPHandler',
+#         'OPTIONS': {
+#             'display_name': 'My Identity Provider',
+#             'entity_id': 'http://localhost:8000/saml/metadata.xml',
+#             'sso_url': 'http://localhost:8000/saml/login/',
+#             'slo_url': 'http://localhost:8000/saml/logout/',
+#             'certificate': IDP_CERTIFICATE,
+#         },
+#     },
+# ]
+
+
 app.config['SAML2_IDENTITY_PROVIDERS'] = [
     {
         'CLASS': 'flask_saml2.sp.idphandler.IdPHandler',
         'OPTIONS': {
             'display_name': 'My Identity Provider',
-            'entity_id': 'http://localhost:8000/saml/metadata.xml',
-            'sso_url': 'http://localhost:8000/saml/login/',
-            'slo_url': 'http://localhost:8000/saml/logout/',
+            'entity_id': 'prod-checkpoint',
+            'sso_url': 'https://mysuni.sk.com/api/checkpoint/saml',
+            'slo_url': 'https://mysuni.sk.com/api/checkpoint/sso/logout',
             'certificate': IDP_CERTIFICATE,
         },
     },
@@ -42,6 +60,8 @@ app.config['SAML2_IDENTITY_PROVIDERS'] = [
 
 @app.route('/')
 def index():
+
+    print('==> /')
     if sp.is_user_logged_in():
         auth_data = sp.get_auth_data_in_session()
 
@@ -63,6 +83,8 @@ def index():
 
         login_url = url_for('flask_saml2_sp.login')
         link = f'<p><a href="{login_url}">Log in to continue</a></p>'
+
+        print(f'link:{link}')
 
         return message + link
 
